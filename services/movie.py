@@ -1,4 +1,4 @@
-from typing import Optional, QuerySet
+from typing import Optional, QuerySet, Iterable
 from db.models import Movie
 from django.db import transaction
 
@@ -14,8 +14,8 @@ def get_movies(title: Optional[str] = None) -> QuerySet[Movie]:
 def create_movie(
     title: str,
     description: str,
-    genres,
-    actors,
+    genres: Iterable,
+    actors: Iterable,
 ) -> Movie:
     movie = Movie.objects.create(title=title, description=description)
     movie.genres.set(genres)
