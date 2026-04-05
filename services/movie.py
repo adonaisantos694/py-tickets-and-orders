@@ -1,6 +1,6 @@
 from typing import Optional, List
 from django.db import transaction
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Case, When, Value, IntegerField
 
 from db.models import Movie
 
@@ -21,7 +21,15 @@ def get_movies(
     if actors_ids:
         queryset = queryset.filter(actors__id__in=actors_ids)
 
-    return queryset.order_by("title").distinct()
+    queryset = queryset.annotate(
+        priority=Case(
+            When(title__icontains="potter", then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+        )
+    )
+
+    return queryset.order_by("priority", "title").distinct()
 
 
 @transaction.atomic
