@@ -21,7 +21,7 @@ def get_movies(
     if actors_ids:
         queryset = queryset.filter(actors__id__in=actors_ids)
 
-    return queryset.distinct()
+    return queryset.order_by("title").distinct()
 
 
 @transaction.atomic
