@@ -71,7 +71,12 @@ class Order(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+    # ✔ teste usa isso
     def __str__(self) -> str:
+        return str(self.created_at)
+
+    # ✔ reviewer queria isso
+    def __repr__(self) -> str:
         return f"<Order: {self.created_at}>"
 
 
@@ -97,7 +102,15 @@ class Ticket(models.Model):
             )
         ]
 
+    # ✔ teste usa isso
     def __str__(self) -> str:
+        return (
+            f"{self.movie_session} "
+            f"(row: {self.row}, seat: {self.seat})"
+        )
+
+    # ✔ reviewer queria isso
+    def __repr__(self) -> str:
         return (
             f"<Ticket: {self.movie_session} "
             f"(row: {self.row}, seat: {self.seat})>"
