@@ -1,6 +1,8 @@
-from django.db import models
+from typing import Any
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.db import models
 
 
 # -------------------
@@ -17,7 +19,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=255, db_index=True)
     description = models.TextField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
 
@@ -29,7 +31,7 @@ class CinemaHall(models.Model):
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -39,9 +41,12 @@ class CinemaHall(models.Model):
 class MovieSession(models.Model):
     show_time = models.DateTimeField()
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    cinema_hall = models.ForeignKey(CinemaHall, on_delete=models.CASCADE)
+    cinema_hall = models.ForeignKey(
+        CinemaHall,
+        on_delete=models.CASCADE
+    )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.movie.title} {self.show_time}"
 
 
@@ -55,7 +60,7 @@ class Order(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.created_at)
 
 
@@ -63,7 +68,10 @@ class Order(models.Model):
 # Ticket
 # -------------------
 class Ticket(models.Model):
-    movie_session = models.ForeignKey(MovieSession, on_delete=models.CASCADE)
+    movie_session = models.ForeignKey(
+        MovieSession,
+        on_delete=models.CASCADE
+    )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     row = models.IntegerField()
     seat = models.IntegerField()
@@ -76,22 +84,36 @@ class Ticket(models.Model):
             )
         ]
 
-    def __str__(self):
-        return f"{self.movie_session} (row: {self.row}, seat: {self.seat})"
+    def __str__(self) -> str:
+        return (
+            f"{self.movie_session} "
+            f"(row: {self.row}, seat: {self.seat})"
+        )
 
-    def clean(self):
+    def clean(self) -> None:
         hall = self.movie_session.cinema_hall
 
         if self.row < 1 or self.row > hall.rows:
-            raise ValidationError({
-                "row": f"row number must be in available range: (1, rows): (1, {hall.rows})"
-            })
+            raise ValidationError(
+                {
+                    "row": (
+                        "row number must be in available range: "
+                        f"(1, rows): (1, {hall.rows})"
+                    )
+                }
+            )
 
         if self.seat < 1 or self.seat > hall.seats_in_row:
-            raise ValidationError({
-                "seat": f"seat number must be in available range: (1, seats_in_row): (1, {hall.seats_in_row})"
-            })
+            raise ValidationError(
+                {
+                    "seat": (
+                        "seat number must be in available range: "
+                        f"(1, seats_in_row): "
+                        f"(1, {hall.seats_in_row})"
+                    )
+                }
+            )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         self.full_clean()
         super().save(*args, **kwargs)
