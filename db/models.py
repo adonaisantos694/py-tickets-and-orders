@@ -13,11 +13,34 @@ class User(AbstractUser):
 
 
 # -------------------
+# Actor
+# -------------------
+class Actor(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+
+# -------------------
+# Genre
+# -------------------
+class Genre(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self) -> str:
+        return self.name
+
+
+# -------------------
 # Movie
 # -------------------
 class Movie(models.Model):
     title = models.CharField(max_length=255, db_index=True)
-    description = models.TextField()
+    description = models.TextField(blank=True)
+    actors = models.ManyToManyField(Actor)
+    genres = models.ManyToManyField(Genre)
 
     def __str__(self) -> str:
         return self.title
