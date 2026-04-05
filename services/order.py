@@ -1,15 +1,17 @@
 from typing import List, Dict, Optional
+from django.db import transaction
+from django.contrib.auth import get_user_model
+from django.db.models import QuerySet
 from datetime import datetime
 
-from django.db import transaction
-from django.db.models import QuerySet
+from db.models import Order, Ticket, MovieSession
 
-from db.models import Order, Ticket, User, MovieSession
+User = get_user_model()
 
 
 @transaction.atomic
 def create_order(
-    tickets: List[Dict[str, int]],
+    tickets: List[Dict],
     username: str,
     date: Optional[str] = None
 ) -> Order:
@@ -28,7 +30,7 @@ def create_order(
             movie_session=MovieSession.objects.get(
                 id=ticket_data["movie_session"]
             ),
-            order=order,
+            order=order
         )
 
     return order
