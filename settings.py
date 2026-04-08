@@ -25,7 +25,6 @@ USE_I18N = True
 USE_TZ = False
 
 
-# 👇 AGORA SIM, O DJANGO PARA DE RECLAMAR
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -33,5 +32,4 @@ INSTALLED_APPS = [
 ]
 
 
-# 👇 ESSENCIAL PRA USER CUSTOM
 AUTH_USER_MODEL = "db.User"
